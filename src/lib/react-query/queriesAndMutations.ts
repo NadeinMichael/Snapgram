@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
   useInfiniteQuery,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
 import {
   createPost,
@@ -20,10 +20,10 @@ import {
   signInAccount,
   signOutAccount,
   updatePost,
-} from "../appwrite/api";
+} from '../appwrite/api';
 
-import { INewPost, INewUser, IUpdatePost } from "@/types";
-import { QUERY_KEYS } from "./queryKeys";
+import { INewPost, INewUser, IUpdatePost } from '@/types';
+import { QUERY_KEYS } from './queryKeys';
 
 export const useCreateUserAccount = () => {
   return useMutation({

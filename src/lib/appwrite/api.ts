@@ -1,7 +1,7 @@
-import { ID, Query } from "appwrite";
+import { ID, Query } from 'appwrite';
 
-import { INewPost, INewUser, IUpdatePost } from "@/types";
-import { account, appwriteConfig, avatars, databases, storage } from "./config";
+import { INewPost, INewUser, IUpdatePost } from '@/types';
+import { account, appwriteConfig, avatars, databases, storage } from './config';
 
 export async function createUserAccount(user: INewUser) {
   try {
@@ -64,7 +64,7 @@ export async function signInAccount(user: { email: string; password: string }) {
 
 export async function signOutAccount() {
   try {
-    const session = account.deleteSession("current");
+    const session = account.deleteSession('current');
 
     return session;
   } catch (error) {
@@ -81,7 +81,7 @@ export async function getCurrentUser() {
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [Query.equal("accountId", currentAccount.$id)]
+      [Query.equal('accountId', currentAccount.$id)]
     );
 
     if (!currentUser) throw Error;
@@ -108,7 +108,7 @@ export async function createPost(post: INewPost) {
     }
 
     // Convert tags into array
-    const tags = post.tags?.replace(/ /g, "").split(",") || [];
+    const tags = post.tags?.replace(/ /g, '').split(',') || [];
 
     // Create post
     const newPost = await databases.createDocument(
@@ -159,7 +159,7 @@ export function getFilePreview(fileId: string) {
       fileId,
       2000,
       2000,
-      "top",
+      'top',
       100
     );
 
@@ -176,7 +176,7 @@ export async function deleteFile(fileId: string) {
   try {
     await storage.deleteFile(appwriteConfig.storageId, fileId);
 
-    return { status: "ok" };
+    return { status: 'ok' };
   } catch (error) {
     console.log(error);
   }
@@ -187,7 +187,7 @@ export async function getRecentPosts() {
   const posts = await databases.listDocuments(
     appwriteConfig.databaseId,
     appwriteConfig.postCollectionId,
-    [Query.orderDesc("$createdAt"), Query.limit(20)]
+    [Query.orderDesc('$createdAt'), Query.limit(20)]
   );
 
   if (!posts) throw Error;
@@ -244,7 +244,7 @@ export async function deleteSavedPost(savedRecordId: string) {
 
     if (!statusCode) throw Error;
 
-    return { status: "ok" };
+    return { status: 'ok' };
   } catch (error) {
     console.log(error);
   }
@@ -290,7 +290,7 @@ export async function updatePost(post: IUpdatePost) {
     }
 
     // Convert tags into array
-    const tags = post.tags?.replace(/ /g, "").split(",") || [];
+    const tags = post.tags?.replace(/ /g, '').split(',') || [];
 
     // Create post
     const updatedPost = await databases.updateDocument(
@@ -327,14 +327,14 @@ export async function deletePost(postId: string, imageId: string) {
       postId
     );
 
-    return { status: "ok" };
+    return { status: 'ok' };
   } catch (error) {
     console.log(error);
   }
 }
 
 export async function getInfinitePosts({ pageParam }: { pageParam: number }) {
-  const queries: any[] = [Query.orderDesc("$updatedAt"), Query.limit(10)];
+  const queries: any[] = [Query.orderDesc('$updatedAt'), Query.limit(10)];
 
   if (pageParam) {
     queries.push(Query.cursorAfter(pageParam.toString()));
@@ -360,7 +360,7 @@ export async function searchPosts(searchTerm: string) {
     const posts = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.postCollectionId,
-      [Query.search("caption", searchTerm)]
+      [Query.search('caption', searchTerm)]
     );
 
     if (!posts) throw Error;

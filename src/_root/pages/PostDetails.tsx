@@ -1,17 +1,37 @@
 import Loader from '@/components/shared/Loader';
 import PostStats from '@/components/shared/PostStats';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 import { useUserContext } from '@/context/AuthContext';
-import { useGetPostById } from '@/lib/react-query/queriesAndMutations';
+import {
+  useDeletePost,
+  useGetPostById,
+} from '@/lib/react-query/queriesAndMutations';
 import { multiFormatDateString } from '@/lib/utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const PostDetails = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const { id } = useParams();
   const { data: post, isPending } = useGetPostById(id || '');
+  const { mutateAsync: deletePost, isPending: isDeletingPost } =
+    useDeletePost();
   const { user } = useUserContext();
 
-  const handleDeletePost = () => {};
+  const handleDeletePost = async (postId: string, imageId: string) => {
+    try {
+      const success = await deletePost({ postId, imageId });
+
+      if (!success) {
+        toast({ title: 'Please try again' });
+      } else {
+        navigate('/');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className='post_details-container'>
@@ -62,20 +82,26 @@ const PostDetails = () => {
                     alt='edit'
                   />
                 </Link>
-                <Button
-                  onClick={handleDeletePost}
-                  variant='ghost'
-                  className={`ghost_details-delete_btn ${
-                    user.id !== post?.creator.$id && 'hidden'
-                  }`}
-                >
-                  <img
-                    src='/assets/icons/delete.svg'
-                    alt='delete'
-                    width={24}
-                    height={24}
-                  />
-                </Button>
+                {isDeletingPost ? (
+                  <Loader />
+                ) : (
+                  <Button
+                    onClick={() =>
+                      handleDeletePost(post?.$id || '', post?.imageId)
+                    }
+                    variant='ghost'
+                    className={`ghost_details-delete_btn ${
+                      user.id !== post?.creator.$id && 'hidden'
+                    }`}
+                  >
+                    <img
+                      src='/assets/icons/delete.svg'
+                      alt='delete'
+                      width={24}
+                      height={24}
+                    />
+                  </Button>
+                )}
               </div>
             </div>
 
